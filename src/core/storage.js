@@ -1,5 +1,5 @@
-const PROJECTS_STORAGE_KEY = 'ai-video-studio-projects';
-const SELECTED_PROJECT_ID_KEY = 'ai-video-studio-selected-project-id';
+const PROJECTS_STORAGE_KEY = 'ai-video-studio-public-projects';
+const SELECTED_PROJECT_ID_KEY = 'ai-video-studio-public-selected-project-id';
 
 function readStorage(key) {
   try {
