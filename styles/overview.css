@@ -1,0 +1,104 @@
+.overview-shell.is-active {
+  display: block;
+}
+
+.overview-toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1200;
+  min-width: 140px;
+  padding: 12px 16px;
+  border-radius: 999px;
+  background: rgba(9, 16, 28, 0.95);
+  color: var(--text);
+  border: 1px solid rgba(103, 224, 208, 0.35);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-8px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.overview-toast.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.overview-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.overview-form__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.overview-form__header h3 {
+  margin: 0 0 6px;
+  font-size: 1.08rem;
+}
+
+.overview-form__header p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.overview-form__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.overview-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: var(--muted);
+}
+
+.overview-field--wide {
+  grid-column: 1 / -1;
+}
+
+.overview-field input,
+.overview-field select,
+.overview-field textarea {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: rgba(8, 16, 28, 0.75);
+  color: var(--text);
+  box-sizing: border-box;
+}
+
+.overview-field textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+
+.overview-field input:disabled,
+.overview-field select:disabled,
+.overview-field textarea:disabled,
+.overview-form button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 760px) {
+  .overview-form__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .overview-form__header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

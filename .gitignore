@@ -1,0 +1,15 @@
+.env
+.env.tmp
+__pycache__/
+*.pyc
+projects/
+*.zip
+.qa_*/
+updates/
+backups/
+pixel-office/node_modules/
+pixel-office/dist/
+*.tsbuildinfo
+.runtime/
+local-tts/diagnostic.wav
+.cache/

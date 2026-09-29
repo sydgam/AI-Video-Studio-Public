@@ -1,0 +1,119 @@
+.pixel-office-shell {
+  min-width: 0;
+}
+
+.council-phaser-office { margin-bottom: 18px; }
+.council-office-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 310px;
+  gap: 12px;
+  align-items: stretch;
+}
+.council-phaser-office__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.council-phaser-office__toolbar div { display: grid; gap: 3px; }
+.council-phaser-office__toolbar span { color: var(--accent); font: 800 .7rem monospace; letter-spacing: .13em; }
+.council-phaser-office__toolbar strong { color: var(--text); }
+.council-shell .pixel-game--legacy { display: none; }
+
+.pixel-office-shell__header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 14px;
+}
+
+.pixel-office-shell__header span {
+  color: var(--accent);
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .14em;
+}
+
+.pixel-office-shell__header h3 {
+  margin: 4px 0 6px;
+  font-size: 1.45rem;
+}
+
+.pixel-office-shell__header p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.pixel-office-embed {
+  position: relative;
+  overflow: hidden;
+  min-height: 360px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: #090d14;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .04);
+}
+
+.pixel-office-embed iframe {
+  display: block;
+  width: 100%;
+  min-height: 0;
+  aspect-ratio: 16 / 9;
+  border: 0;
+  background: #090d14;
+}
+
+.pixel-office-embed__loading {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  background: #090d14;
+  pointer-events: none;
+}
+
+.pixel-office-embed.is-loaded .pixel-office-embed__loading {
+  display: none;
+}
+
+.council-staff-status {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--panel);
+}
+.council-staff-status > header { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:14px; border-bottom:1px solid var(--border); }
+.council-staff-status > header span { display:block; color:var(--accent); font:800 .62rem monospace; letter-spacing:.13em; }
+.council-staff-status > header strong { display:block; margin-top:3px; font-size:.9rem; }
+.council-staff-status > header small { color:var(--muted); }
+.council-staff-status__list { display:grid; align-content:start; gap:8px; max-height:535px; padding:10px; overflow:auto; }
+.council-staff-status__list > p { margin:10px 4px; color:var(--muted); font-size:.78rem; }
+.council-staff-card { display:grid; grid-template-columns:58px minmax(0,1fr); gap:9px; padding:9px; border:1px solid var(--border); border-radius:11px; background:var(--panel-2); }
+.council-staff-card__thumb { width:58px; height:76px; overflow:hidden; border:1px solid rgba(255,255,255,.14); border-radius:8px; background-color:#192232; background-repeat:no-repeat; background-position:10% 31%; background-size:440% auto; image-rendering:pixelated; }
+.council-staff-card__content { min-width:0; }
+.council-staff-card header { display:flex; align-items:flex-start; justify-content:space-between; gap:6px; }
+.council-staff-card header strong,.council-staff-card header span { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.council-staff-card header strong { font-size:.78rem; }
+.council-staff-card header span { margin-top:2px; color:var(--muted); font-size:.62rem; }
+.council-staff-card header em { flex:none; padding:3px 5px; border-radius:999px; background:rgba(105,224,180,.12); color:#77e3b8; font-size:.58rem; font-style:normal; }
+.council-staff-card[data-state="moving"] header em,.council-staff-card[data-state="meeting"] header em { background:rgba(83,185,255,.13); color:#7fcaff; }
+.council-staff-card[data-state="blocked"] header em { background:rgba(255,111,134,.14); color:#ff91a4; }
+.council-staff-card p { margin:6px 0 0; color:var(--muted); font-size:.63rem; line-height:1.35; }
+.council-staff-card p b { color:var(--text); font-weight:700; }
+.council-staff-card__prompt { display:-webkit-box; overflow:hidden; -webkit-box-orient:vertical; -webkit-line-clamp:2; }
+.council-staff-card button { margin-top:7px; padding:5px 7px; border:1px solid var(--border); border-radius:6px; background:transparent; color:var(--accent); font-size:.62rem; cursor:pointer; }
+.council-staff-card button:hover { border-color:var(--accent); background:color-mix(in srgb,var(--accent) 8%,transparent); }
+
+@media (max-width: 1100px) {
+  .council-office-layout { grid-template-columns:1fr; }
+  .council-staff-status__list { grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); max-height:320px; }
+}
+@media (max-width: 900px) {
+  .pixel-office-embed iframe { min-height: 760px; }
+}

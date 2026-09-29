@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Video Studio</title>
+    <link rel="stylesheet" href="./styles/main.css" />
+    <link rel="stylesheet" href="./styles/layout.css" />
+    <link rel="stylesheet" href="./styles/components.css" />
+    <link rel="stylesheet" href="./styles/council.css" />
+    <link rel="stylesheet" href="./styles/pixel-office.css" />
+    <link rel="stylesheet" href="./styles/overview.css" />
+    <link rel="stylesheet" href="./styles/storyboard.css" />
+    <link rel="stylesheet" href="./styles/workflow.css" />
+    <link rel="stylesheet" href="./styles/tts.css" />
+    <link rel="stylesheet" href="./styles/files.css" />
+    <link rel="stylesheet" href="./styles/settings.css" />
+    <link rel="stylesheet" href="./styles/themes.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <h1>AI Video Studio</h1>
+          <button class="sidebar-toggle" id="sidebarToggleButton" type="button" aria-expanded="true" aria-label="프로젝트 패널 접기">‹</button>
+        </div>
+
+        <section class="project-panel" aria-label="프로젝트 정보">
+          <h2>프로젝트</h2>
+          <div class="project-title">새 프로젝트 준비 중</div>
+          <button class="button button--secondary" id="newProjectButton" type="button">+ 새 프로젝트</button>
+          <div class="project-transfer">
+            <button class="button button--secondary" id="exportProjectButton" type="button" disabled>프로젝트 내보내기</button>
+            <button class="button button--secondary" id="importProjectButton" type="button">프로젝트 가져오기</button>
+            <input id="importProjectInput" type="file" accept=".json,.aivstudio.json,application/json" hidden />
+          </div>
+          <p class="project-transfer__status" id="projectTransferStatus" aria-live="polite"></p>
+          <div class="project-list" id="projectList" aria-label="프로젝트 목록"></div>
+          <p class="sidebar-hint">새 프로젝트를 생성해 작업을 시작해 보세요.</p>
+        </section>
+      </aside>
+
+      <main class="main-panel">
+        <header class="topbar">
+          <div>
+            <h2 class="topbar-title">현재 프로젝트가 없습니다</h2>
+            <p class="topbar-description">새 프로젝트를 시작하기 전까지는 기본 구조만 표시됩니다.</p>
+          </div>
+          <div class="topbar-actions">
+            <label class="theme-control">
+              <span>화면 모드</span>
+              <select id="themeSelect" aria-label="화면 모드">
+                <option value="dark">다크</option>
+                <option value="warm-light">웜 화이트</option>
+                <option value="sage">세이지 그린</option>
+              </select>
+            </label>
+            <div class="status-pill" aria-live="polite">저장 상태: 준비 중</div>
+          </div>
+        </header>
+
+        <nav class="tabs" aria-label="페이지 탭">
+          <button class="tab-button is-active" type="button" id="councilTab" data-tab="council">임원진 회의실</button>
+          <button class="tab-button" type="button" id="overviewTab" data-tab="overview">개요</button>
+          <button class="tab-button" type="button" id="storyboardTab" data-tab="storyboard">스토리보드</button>
+          <button class="tab-button" type="button" id="workflowTab" data-tab="workflow">워크플로우</button>
+          <button class="tab-button" type="button" id="ttsTab" data-tab="tts">TTS</button>
+          <button class="tab-button" type="button" id="bgmTab" data-tab="bgm">BGM</button>
+          <button class="tab-button" type="button" id="filesTab" data-tab="files">파일</button>
+          <button class="tab-button" type="button" id="settingsTab" data-tab="settings">설정</button>
+        </nav>
+
+        <section class="tab-panels">
+          <section class="tab-panel council-shell is-active" id="councilPanel" data-section="council" aria-labelledby="councilTab">
+            <header class="council-header">
+              <div>
+                <span class="council-eyebrow">PIXEL EXECUTIVE BOARD</span>
+                <h3>임원진 회의실</h3>
+                <p>GPT, Claude, Gemini가 독립적으로 검토하고 의장이 최종 의견을 정리합니다.</p>
+              </div>
+              <button class="button button--secondary" id="councilNewSessionButton" type="button">새 회의</button>
+            </header>
+
+            <section class="council-phaser-office" aria-label="AI Video Studio Phaser 픽셀 오피스">
+              <div class="council-phaser-office__toolbar">
+                <div><span>PIXEL OFFICE MANAGEMENT</span><strong id="councilPhaserStatus">안건을 기다리는 중</strong></div>
+                <button class="button" id="councilPhaserHireButton" type="button">+ 직원 추가</button>
+              </div>
+              <div class="council-office-layout">
+                <div class="pixel-office-embed">
+                  <iframe id="councilPixelOfficeFrame" title="임원진 회의실 Pixel Office" data-lazy-src="./pixel-office/dist/index.html?embedded=council" loading="eager"></iframe>
+                  <div class="pixel-office-embed__loading">Pixel Office를 불러오는 중입니다.</div>
+                </div>
+                <aside class="council-staff-status" aria-label="직원 상태와 설정">
+                  <header><div><span>AI STAFF</span><strong>직원 상태</strong></div><small id="councilStaffStatusCount">0명</small></header>
+                  <div class="council-staff-status__list" id="councilStaffStatusList"><p>등록된 직원이 없습니다.</p></div>
+                </aside>
+              </div>
+            </section>
+
+            <section class="pixel-game pixel-game--legacy" aria-label="기존 픽셀 사옥 호환 레이어">
+              <div class="pixel-game__sign"><span>AI VIDEO STUDIO</span><strong>24시간 아이디어가 움직이는 픽셀 제작사</strong></div>
+              <div class="pixel-game__stage">
+                <canvas class="pixel-game__canvas" id="councilGameCanvas" aria-label="AI 직원들이 근무하는 픽셀 스튜디오 게임 화면"></canvas>
+                <img class="pixel-game__boardroom-overlay" src="./assets/council/executive-boardroom-seated-v1.jpeg" alt="회의 테이블 의자에 앉아 있는 Claude, GPT, Gemini 임원진" />
+                <img class="pixel-game__background" src="./assets/council/pixel-studio-hq-v1.png" alt="3층으로 구성된 픽셀 아트 AI 영상 제작 스튜디오" />
+                <div class="pixel-game__floor-label pixel-game__floor-label--third"><b>3F</b><span>임원진 회의실</span></div>
+                <div class="pixel-game__floor-label pixel-game__floor-label--second"><b>2F</b></div>
+                <div class="pixel-game__floor-label pixel-game__floor-label--first"><b>1F</b></div>
+
+                <div class="pixel-game__room-label pixel-game__room-label--strategy">콘셉트 전략실</div>
+                <div class="pixel-game__room-label pixel-game__room-label--script">내러티브 작가실</div>
+                <div class="pixel-game__room-label pixel-game__room-label--board">컷 설계실</div>
+                <div class="pixel-game__room-label pixel-game__room-label--visual">프레임 미술실</div>
+                <div class="pixel-game__room-label pixel-game__room-label--motion">모션 제작실</div>
+                <div class="pixel-game__room-label pixel-game__room-label--quality">최종 검수실</div>
+
+                <div class="pixel-game__status"><span>EXECUTIVE MEETING</span><strong id="councilRoomStatus">안건을 기다리는 중</strong></div>
+                <div class="pixel-game__employee-layer" id="councilEmployeeLayer"></div>
+                <div class="council-executives">
+                  <article class="pixel-executive pixel-executive--gpt" data-council-member="openai"><div class="pixel-executive__bubble">준비됐어요</div><img src="./assets/council/executive-gpt-2head-v1.png" alt="GPT 임원" /><strong>GPT</strong><small>전략 총괄</small></article>
+                  <article class="pixel-executive pixel-executive--claude" data-council-member="anthropic"><div class="pixel-executive__bubble">검토할게요</div><img src="./assets/council/executive-claude-2head-v1.png" alt="Claude 임원" /><strong>Claude</strong><small>논리·품질 총괄</small></article>
+                  <article class="pixel-executive pixel-executive--gemini" data-council-member="gemini"><div class="pixel-executive__bubble">아이디어 준비!</div><img src="./assets/council/executive-gemini-2head-v1.png" alt="Gemini 임원" /><strong>Gemini</strong><small>창의 전략 총괄</small></article>
+                </div>
+                <button class="council-hire-seat" type="button" id="councilHireButton" title="AI 직원 기능은 다음 단계에서 추가됩니다."><span>＋</span><strong>직원 추가</strong><small>준비 중</small></button>
+              </div>
+            </section>
+
+            <section class="council-notes" aria-labelledby="councilNotesTitle">
+              <header><div><span>MEETING ARCHIVE</span><h4 id="councilNotesTitle">임원진 회의 노트</h4></div><strong id="councilNotesCount">0개의 회의록</strong></header>
+              <div class="council-notes__list" id="councilNotesList"><p>완료된 회의의 최종 결론이 날짜와 주제별로 저장됩니다.</p></div>
+            </section>
+
+            <section class="council-console">
+              <div class="council-question-card">
+                <label for="councilQuestion">오늘의 안건</label>
+                <div class="council-question-dropzone" id="councilQuestionDropzone">
+                  <div class="council-question-attachments" id="councilQuestionAttachments" hidden></div>
+                  <textarea id="councilQuestion" rows="5" maxlength="12000" placeholder="임원진에게 검토받을 질문이나 기획 안건을 입력하세요. 이미지와 문서를 끌어다 놓을 수 있습니다."></textarea>
+                  <div class="council-question-dropzone__footer"><span>이미지·PDF·Word(DOCX)·PowerPoint·텍스트 파일을 드래그앤드롭</span><label class="button button--secondary">파일 추가<input id="councilQuestionFileInput" type="file" multiple accept="image/*,.pdf,.docx,.pptx,.rtf,.odt,.txt,.md,.json,.html,.xml" hidden /></label></div>
+                </div>
+                <div class="council-controls">
+                  <label>회의 방식
+                    <select id="councilMode">
+                      <option value="quick">빠른 회의 · 4회 호출</option>
+                      <option value="deep">심층 토론 · 7회 호출</option>
+                    </select>
+                  </label>
+                  <label>회의 의장
+                    <select id="councilChair">
+                      <option value="openai">GPT</option>
+                      <option value="anthropic">Claude</option>
+                      <option value="gemini">Gemini</option>
+                    </select>
+                  </label>
+                  <button class="button" id="councilRunButton" type="button">임원진 회의 시작</button>
+                  <button class="button button--secondary" id="councilCancelButton" type="button" hidden>회의 중단</button>
+                </div>
+                <details class="council-invites">
+                  <summary>실무진 회의 초대 <span id="councilInviteCount">0명 선택</span></summary>
+                  <div id="councilEmployeeInvites"><p>부서에서 직원을 먼저 추가해 주세요.</p></div>
+                  <small>초대 직원 1명당 LLM API가 1회 추가 호출됩니다.</small>
+                </details>
+                <p class="council-notice">최신 정보나 외부 검증이 필요한 안건은 각 임원이 자동으로 웹을 검색합니다. API 키가 없는 임원은 자동으로 불참 처리됩니다.</p>
+              </div>
+
+              <div class="council-progress" id="councilProgress" aria-live="polite">
+                <span data-stage="independent">1. 독립 의견</span>
+                <i></i><span data-stage="review">2. 교차 검토</span>
+                <i></i><span data-stage="synthesis">3. 의장 종합</span>
+                <i></i><span data-stage="complete">4. 회의 완료</span>
+              </div>
+
+              <div class="council-opinions" id="councilOpinions">
+                <article class="council-opinion" data-council-result="openai"><header><strong>GPT</strong><span>대기 중</span></header><div class="council-opinion__body">회의가 시작되면 독립 의견이 표시됩니다.</div></article>
+                <article class="council-opinion" data-council-result="anthropic"><header><strong>Claude</strong><span>대기 중</span></header><div class="council-opinion__body">회의가 시작되면 독립 의견이 표시됩니다.</div></article>
+                <article class="council-opinion" data-council-result="gemini"><header><strong>Gemini</strong><span>대기 중</span></header><div class="council-opinion__body">회의가 시작되면 독립 의견이 표시됩니다.</div></article>
+              </div>
+              <section class="council-staff-reports" id="councilStaffReports" hidden>
+                <header><strong>실무진 사전 검토</strong><span>임원진이 아래 의견을 읽고 최종 결론에 반영합니다.</span></header>
+                <div id="councilStaffReportList"></div>
+              </section>
+
+              <article class="council-final" id="councilFinal" hidden>
+                <header><div><span>CHAIR'S SUMMARY</span><h4>임원진 최종 결론</h4></div><div class="council-final__actions"><button class="button button--secondary" id="councilCopyButton" type="button">복사</button><button class="button" id="councilSendOverviewButton" type="button">개요 메모로 보내기</button></div></header>
+                <div class="council-final__body" id="councilFinalBody"></div>
+              </article>
+            </section>
+          </section>
+
+          <section class="tab-panel overview-shell" id="overviewPanel" data-section="overview" aria-labelledby="overviewTab">
+            <div class="overview-toast" id="overviewToast" aria-live="polite">저장되었습니다.</div>
+            <form class="overview-form" id="overviewForm">
+              <div class="overview-form__header">
+                <div>
+                  <h3>프로젝트 개요</h3>
+                  <p>영상 기획의 기본 정보를 입력해 두면 이후 단계에서 바로 활용할 수 있습니다.</p>
+                </div>
+                <button class="button" type="submit">저장</button>
+              </div>
+
+              <div class="overview-form__grid">
+                <label class="overview-field">
+                  <span>프로젝트명</span>
+                  <input id="overviewProjectName" name="projectName" type="text" placeholder="예: 제품 소개 영상" />
+                </label>
+                <label class="overview-field">
+                  <span>클라이언트명</span>
+                  <input id="overviewClientName" name="clientName" type="text" placeholder="예: Studio N" />
+                </label>
+                <label class="overview-field">
+                  <span>영상 제목</span>
+                  <input id="overviewVideoTitle" name="videoTitle" type="text" placeholder="예: 2026 브랜드 캠페인" />
+                </label>
+                <label class="overview-field">
+                  <span>영상 비율</span>
+                  <select id="overviewAspectRatio" name="aspectRatio">
+                    <option value="16:9">16:9</option>
+                    <option value="9:16">9:16</option>
+                    <option value="1:1">1:1</option>
+                    <option value="2:3">2:3</option>
+                    <option value="3:2">3:2</option>
+                    <option value="4:3">4:3</option>
+                    <option value="3:4">3:4</option>
+                  </select>
+                </label>
+                <label class="overview-field">
+                  <span>영상 길이</span>
+                  <input id="overviewDuration" name="duration" type="text" placeholder="예: 45초" />
+                </label>
+                <label class="overview-field">
+                  <span>톤앤매너</span>
+                  <input id="overviewTone" name="tone" type="text" placeholder="예: 친근하고 세련된" />
+                </label>
+                <label class="overview-field overview-field--wide">
+                  <span>핵심 메시지</span>
+                  <textarea id="overviewCoreMessage" name="coreMessage" rows="3" placeholder="영상을 통해 전달하고 싶은 핵심 메시지를 적어주세요."></textarea>
+                </label>
+                <label class="overview-field overview-field--wide">
+                  <span>영상 목적</span>
+                  <textarea id="overviewPurpose" name="purpose" rows="3" placeholder="예: 브랜드 인지도 향상"></textarea>
+                </label>
+                <label class="overview-field overview-field--wide">
+                  <span>타깃 시청자</span>
+                  <textarea id="overviewTargetAudience" name="targetAudience" rows="3" placeholder="예: 20대~30대 직장인"></textarea>
+                </label>
+                <label class="overview-field overview-field--wide">
+                  <span>참고 링크</span>
+                  <textarea id="overviewReferenceLinks" name="referenceLinks" rows="3" placeholder="참고할 링크나 자료를 입력하세요."></textarea>
+                </label>
+                <label class="overview-field overview-field--wide">
+                  <span>제작 메모</span>
+                  <textarea id="overviewNotes" name="notes" rows="4" placeholder="추가로 남길 메모가 있으면 적어주세요."></textarea>
+                </label>
+              </div>
+            </form>
+          </section>
+
+          <section class="tab-panel storyboard-shell" id="storyboardPanel" data-section="storyboard" aria-labelledby="storyboardTab">
+            <div class="storyboard-toolbar">
+              <div>
+                <h3>스토리보드</h3>
+                <p>영상의 컷 구성과 프롬프트를 순서대로 관리합니다.</p>
+              </div>
+              <div class="storyboard-toolbar__actions">
+                <button class="button button--secondary" type="button" id="undoStoryboardButton" disabled>실행 취소</button>
+                <label class="storyboard-size-control">
+                  <span>이미지 크기</span>
+                  <select id="storyboardPreviewSize" aria-label="스토리보드 이미지 크기">
+                    <option value="large">크게</option>
+                    <option value="medium" selected>중간</option>
+                    <option value="small">작게</option>
+                  </select>
+                </label>
+                <button class="button" type="button" id="addStoryboardCutButton" disabled>새 컷 추가</button>
+              </div>
+            </div>
+            <div class="storyboard-history" id="storyboardHistory" aria-live="polite"></div>
+            <div class="storyboard-list" id="storyboardList" aria-live="polite"></div>
+          </section>
+
+          <section class="tab-panel workflow-shell" id="workflowPanel" data-section="workflow" aria-labelledby="workflowTab">
+            <header class="workflow-toolbar">
+              <div>
+                <h3>워크플로우</h3>
+                <p>AI 서비스와 사람의 검토 단계를 노드로 연결합니다.</p>
+              </div>
+              <div class="workflow-toolbar__actions">
+                <span class="workflow-save-state" id="workflowSaveState">프로젝트를 선택하세요</span>
+                <button class="button button--secondary" type="button" id="workflowExportButton" disabled>구성 저장</button>
+                <button class="button button--secondary" type="button" id="workflowImportButton" disabled>구성 불러오기</button>
+                <input type="file" id="workflowImportInput" accept=".aivworkflow.json,application/json" hidden />
+                <button class="button button--secondary" type="button" id="workflowGroupButton" disabled>그룹화</button>
+                <button class="button button--secondary" type="button" id="workflowUngroupButton" disabled>그룹 해제</button>
+                <button class="button button--secondary workflow-delete-button" type="button" id="workflowDeleteButton" disabled>선택 삭제</button>
+                <button class="button button--secondary" type="button" id="workflowArrangeButton" disabled>노드 정렬</button>
+                <button class="button button--secondary" type="button" id="workflowFitButton" disabled>화면 맞춤</button>
+                <button class="button" type="button" id="workflowRunSelectedButton" disabled hidden>노드 실행</button>
+                <button class="button button--secondary" type="button" id="workflowRunButton" disabled>전체 실행</button>
+              </div>
+            </header>
+
+            <div class="workflow-editor">
+              <aside class="workflow-library" aria-label="노드 라이브러리">
+                <div class="workflow-panel-heading">
+                  <h4>노드</h4>
+                  <span>추가할 작업</span>
+                </div>
+                <div class="workflow-node-library" id="workflowNodeLibrary"></div>
+              </aside>
+
+              <section class="workflow-canvas" id="workflowCanvas" aria-label="워크플로우 캔버스">
+                <div class="workflow-viewport" id="workflowViewport">
+                  <svg class="workflow-edge-layer" id="workflowEdgeLayer" aria-hidden="true"></svg>
+                  <div class="workflow-group-layer" id="workflowGroupLayer"></div>
+                  <div class="workflow-node-layer" id="workflowNodeLayer"></div>
+                </div>
+                <div class="workflow-selection-box" id="workflowSelectionBox" hidden></div>
+                <div class="workflow-canvas__empty" id="workflowCanvasEmpty">
+                  <div class="workflow-canvas__empty-icon">＋</div>
+                  <strong>워크플로우를 만들어 보세요</strong>
+                  <p>왼쪽 노드를 클릭하거나 이곳으로 끌어다 놓으세요.</p>
+                </div>
+                <div class="workflow-zoom" id="workflowZoom">100%</div>
+              </section>
+
+              <aside class="workflow-inspector" id="workflowInspectorPanel" aria-label="노드 설정과 생성 히스토리">
+                <div class="workflow-panel-heading workflow-inspector__heading">
+                  <div class="workflow-inspector__tabs" role="tablist" aria-label="오른쪽 패널">
+                    <button class="workflow-inspector__tab is-active" type="button" role="tab" data-workflow-side-tab="settings" aria-selected="true">설정</button>
+                    <button class="workflow-inspector__tab" type="button" role="tab" data-workflow-side-tab="history" aria-selected="false">히스토리</button>
+                  </div>
+                  <button class="workflow-inspector__collapse" id="workflowInspectorToggle" type="button" aria-expanded="true" aria-label="오른쪽 패널 접기">›</button>
+                </div>
+                <div class="workflow-inspector__content" id="workflowInspector" data-workflow-side-content="settings">
+                  <strong>선택된 노드가 없습니다.</strong>
+                  <p>노드를 선택하면 모델, 프롬프트와 실행 옵션을 이곳에서 편집합니다.</p>
+                </div>
+                <div class="workflow-history" id="workflowGenerationHistory" data-workflow-side-content="history" hidden></div>
+              </aside>
+            </div>
+          </section>
+
+          <section class="tab-panel tts-shell" id="ttsPanel" data-section="tts" aria-labelledby="ttsTab">
+            <header class="tts-header">
+              <div>
+                <span class="tts-eyebrow">LOCAL VOICE STUDIO</span>
+                <h3>로컬 TTS</h3>
+                <p>대본을 음성으로 만들고 프로젝트별 내레이션을 관리합니다.</p>
+              </div>
+              <div class="tts-engine-status" id="ttsEngineStatus" data-state="checking">
+                <i aria-hidden="true"></i><span>로컬 엔진 확인 중</span>
+              </div>
+            </header>
+
+            <div class="tts-workspace">
+              <section class="tts-editor" aria-labelledby="ttsScriptTitle">
+                <div class="tts-section-heading">
+                  <div><span>01 · SCRIPT</span><h4 id="ttsScriptTitle">새로 읽을 대본</h4></div>
+                  <strong id="ttsCharacterCount">0자</strong>
+                </div>
+                <p class="tts-help">완성할 음성에서 실제로 말할 내용입니다. 목소리 설명이나 참조 녹음의 받아쓰기는 오른쪽에 입력하세요.</p>
+                <textarea id="ttsScript" maxlength="12000" placeholder="예: 오늘의 뉴스를 전해드립니다. 첫 번째 소식입니다."></textarea>
+                <div class="tts-editor__footer">
+                  <span>한국어 문장부호를 사용하면 호흡이 더 자연스럽습니다.</span>
+                  <button class="button button--secondary" id="ttsClearButton" type="button">비우기</button>
+                </div>
+              </section>
+
+              <aside class="tts-controls" aria-label="TTS 생성 설정">
+                <div class="tts-section-heading">
+                  <div><span>02 · VOICE</span><h4>음성 설정</h4></div>
+                </div>
+                <label class="tts-field"><span>목소리를 어떻게 정할까요?</span><select id="ttsMode" aria-describedby="ttsModeHelp"><option value="preset">기본 화자에서 선택</option><option value="design">설명으로 새 목소리 만들기</option><option value="clone">녹음의 목소리 따라 만들기</option></select></label>
+                <p class="tts-mode-help" id="ttsModeHelp"></p>
+                <label class="tts-field"><span>모델</span><select id="ttsModel"><option value="qwen3-tts-1.7b">Qwen3-TTS 1.7B · 고품질</option><option value="qwen3-tts-0.6b">Qwen3-TTS 0.6B · 빠른 생성</option></select></label>
+                <label class="tts-field"><span>언어</span><select id="ttsLanguage"><option value="Korean">한국어</option><option value="Auto">자동 감지</option><option value="English">영어</option><option value="Japanese">일본어</option></select></label>
+                <label class="tts-field" data-tts-mode-panel="preset"><span>화자</span><select id="ttsSpeaker"><option value="Sohee">Sohee · 한국어 여성</option><option value="Vivian">Vivian · 중국어 여성</option><option value="Serena">Serena · 중국어 여성</option><option value="Uncle_Fu">Uncle Fu · 중국어 남성</option><option value="Dylan">Dylan · 베이징 방언 남성</option><option value="Eric">Eric · 쓰촨 방언 남성</option><option value="Ryan">Ryan · 영어 남성</option><option value="Aiden">Aiden · 영어 남성</option><option value="Ono_Anna">Ono Anna · 일본어 여성</option></select></label>
+                <div data-tts-mode-panel="preset" class="tts-speaker-preview">
+                  <span id="ttsSpeakerSampleLabel">Sohee 미리듣기</span>
+                  <audio id="ttsSpeakerSample" controls preload="none" aria-labelledby="ttsSpeakerSampleLabel"></audio>
+                  <p class="tts-help">동일한 한국어 문장 · 1.7B 기본 말투 샘플. 위에서 화자를 바꾸고 재생하세요. 0.6B·다른 언어·연기 지침 적용 시 소리가 달라질 수 있습니다.</p>
+                  <p class="tts-help">기본 화자는 9명입니다. 새로운 목소리는 ‘설명으로 만들기’ 또는 ‘녹음 따라 만들기’를 사용하세요.</p>
+                </div>
+                <label class="tts-field tts-field--wide" id="ttsInstructionField"><span id="ttsInstructionLabel">연기·감정 지침 · 선택</span><textarea id="ttsInstruction" rows="4" placeholder="예: 신뢰감 있는 내레이터. 차분하게 시작하고 핵심 문장은 힘 있게 강조한다."></textarea><small id="ttsInstructionHelp"></small></label>
+                <fieldset class="tts-performance" id="ttsPerformance">
+                  <legend>말하는 방식</legend>
+                  <label class="tts-field"><span>말하는 속도</span><select id="ttsPace"><option value="">직접 쓴 설명 따르기</option><option value="slow">느리게</option><option value="slightly_slow">약간 느리게</option><option value="normal">보통</option><option value="slightly_fast">약간 빠르게</option><option value="fast">빠르게</option></select></label>
+                  <label class="tts-field"><span>전체 감정</span><select id="ttsEmotion"><option value="">직접 쓴 설명 따르기</option><option value="neutral">담담함</option><option value="calm">차분함</option><option value="happy">기쁨</option><option value="sad">슬픔</option><option value="lament">한탄·아쉬움</option><option value="angry">분노</option><option value="confident">자신감·의기양양함</option><option value="excited">설렘·흥분</option></select></label>
+                  <label class="tts-field"><span>마지막 문장 감정</span><select id="ttsEndingEmotion"><option value="">전체 감정 유지 / 직접 쓴 설명 따르기</option><option value="neutral">담담하게 마무리</option><option value="calm">차분하게 마무리</option><option value="happy">기쁘게 마무리</option><option value="sad">슬프게 마무리</option><option value="lament">한탄하며 마무리</option><option value="angry">분노하며 마무리</option><option value="confident">자신감 있게 마무리</option><option value="excited">들뜬 감정으로 마무리</option></select></label>
+                  <p class="tts-help" id="ttsPerformanceHelp">선택한 설정을 설명 뒤에 덧붙입니다. 같은 항목이 충돌하면 선택한 설정을 우선하도록 요청합니다. 속도는 정확한 배속이 아닌 상대적인 발화 지시입니다.</p>
+                </fieldset>
+                <details class="tts-prompt-details"><summary>실제로 전달할 목소리 지침 확인</summary><pre id="ttsPromptPreview"></pre></details>
+                <div class="tts-reference" data-tts-mode-panel="clone" hidden>
+                  <label class="tts-reference__dropzone" id="ttsReferenceDropzone">
+                    <input id="ttsReferenceInput" type="file" accept="audio/wav,audio/mpeg,audio/mp4,audio/flac,.wav,.mp3,.m4a,.flac" hidden />
+                    <strong>따라 할 목소리의 녹음 추가</strong><span>WAV 권장 · 한 사람의 깨끗한 음성 약 3~15초</span>
+                  </label>
+                  <div class="tts-reference__file" id="ttsReferenceFile" hidden></div>
+                  <audio id="ttsReferencePlayer" controls preload="metadata" hidden aria-label="추가한 참조 녹음 듣기"></audio>
+                  <button class="button button--secondary" id="ttsReferenceClear" type="button" hidden>참조 녹음 제거</button>
+                  <label class="tts-field tts-field--wide"><span>녹음에 들어 있는 말 · 받아쓰기 <small>선택·권장</small></span><textarea id="ttsReferenceText" rows="3" placeholder="녹음에서 ‘안녕하세요. 만나서 반갑습니다.’라고 말했다면 그 내용을 그대로 입력하세요."></textarea><small>새로 읽을 대본과 달라도 됩니다. 비워두면 목소리 특징만 참고하며, 유사도가 낮아질 수 있습니다.</small></label>
+                  <p class="tts-help">예: 녹음과 받아쓰기 = ‘안녕하세요.’ → 새로 읽을 대본 = ‘오늘의 뉴스를 전해드립니다.’ → 녹음의 목소리로 새 대본을 읽습니다. 이 방식은 별도의 연기·감정 지시를 지원하지 않습니다.</p>
+                </div>
+                <button class="button tts-generate" id="ttsGenerateButton" type="button" disabled>음성 생성</button>
+                <p class="tts-message" id="ttsMessage" aria-live="polite">로컬 TTS 엔진을 연결하면 생성할 수 있습니다.</p>
+              </aside>
+            </div>
+
+            <section class="tts-output" aria-labelledby="ttsOutputTitle">
+              <div class="tts-section-heading">
+                <div><span>03 · OUTPUT</span><h4 id="ttsOutputTitle">생성 결과</h4></div>
+              </div>
+              <div class="tts-output__empty" id="ttsOutputEmpty"><span>♪</span><strong>아직 생성된 음성이 없습니다.</strong><p>완료된 음성은 이곳에서 재생하고 WAV 파일로 저장할 수 있습니다.</p></div>
+              <div class="tts-output__player" id="ttsOutputPlayer" hidden><audio id="ttsAudio" controls preload="metadata"></audio><div><button class="button button--secondary" id="ttsUseAsReference" type="button">이 목소리로 다른 대사 만들기</button><button class="button button--secondary" id="ttsDownloadButton" type="button">WAV 다운로드</button><button class="button" id="ttsRegenerateButton" type="button">다시 생성</button></div></div>
+            </section>
+          </section>
+
+          <section class="tab-panel tts-shell" id="bgmPanel" data-section="bgm" aria-labelledby="bgmTab">
+            <header class="tts-header"><div><span class="tts-eyebrow">LOCAL MUSIC STUDIO</span><h3>음악 제작</h3><p>보컬곡과 연주곡을 만들고, 가사와 음악의 전개를 직접 설정하세요.</p></div><span id="bgmEngine">엔진 확인 중</span></header>
+            <div class="tts-editor"><button class="button button--secondary" id="bgmFullEditor" type="button">공식 전체 편집기 시작</button> <a id="bgmFullEditorLink" href="http://127.0.0.1:7861" target="_blank" rel="noopener" hidden>전체 편집기 열기</a> <button class="button button--secondary" id="bgmCloseEditor" type="button" hidden>전체 편집기 종료 · Studio 생성으로 복귀</button><p class="tts-help">커버·참조 오디오·구간 수정·보조 LM·고급 옵션은 공식 편집기에서 사용합니다. 처음 시작하면 모델 로딩 시간이 필요합니다. 전체 편집기를 종료하면 아래 Studio 생성을 다시 사용할 수 있습니다. 공식 편집기의 결과는 별도로 저장됩니다.</p></div>
+            <div class="tts-workspace">
+              <section class="tts-editor">
+                <div class="tts-section-heading bgm-heading"><h4>음악 설명</h4><label class="bgm-toggle"><input id="bgmInstrumental" type="checkbox" /> 인스트루먼트(BGM)</label><button class="button button--secondary" id="bgmExample" type="button">예시 넣기</button></div>
+                <p class="tts-help">장르, 악기, 리듬, 공간감, 시작부터 끝까지의 변화를 구체적으로 적으세요. 영어 설명을 권장합니다. 아래 선택한 설정이 함께 전달됩니다.</p>
+                <textarea id="bgmPrompt" maxlength="3000" placeholder="예: Cinematic documentary underscore. Felt piano plays a sparse repeating motif over warm cello and soft strings. A gentle pulse gradually builds, then resolves into a hopeful ending. Leave room for narration."></textarea>
+                <details class="tts-prompt-details"><summary>최종 프롬프트 확인</summary><pre id="bgmPreview"></pre></details>
+                <p class="tts-help">체크하면 보컬 없는 BGM, 해제하면 보컬곡입니다. BGM에서는 아래 가사를 사용하지 않습니다.</p>
+                <label class="tts-field"><span>가사 · [Verse], [Chorus], [Bridge]로 구간 지정 가능</span><textarea id="bgmLyrics" maxlength="20000" placeholder="[Verse]&#10;여기에 노래할 가사를 적으세요&#10;&#10;[Chorus]&#10;후렴 가사를 적으세요"></textarea></label>
+                <p class="tts-help">가사는 실제로 노래할 내용입니다. 장르·보컬 성별·창법·감정은 음악 설명에 적으세요. 빈 가사는 특정 대사를 지정하지 않습니다. 연주곡을 선택할 때만 가사를 제외합니다.</p>
+                <label class="tts-field"><span>보컬 언어</span><select id="bgmLanguage"><option value="unknown">자동 · 언어 지정 안 함</option><option value="ko">한국어</option><option value="en">영어</option><option value="ja">일본어</option><option value="zh">중국어</option><option value="es">스페인어</option><option value="fr">프랑스어</option><option value="de">독일어</option></select></label><p class="tts-help">자동으로 두어도 됩니다. 한국어 발음이 중요하면 한국어를 지정하세요. ko·en은 언어를 나타내는 코드입니다.</p>
+              </section>
+              <aside class="tts-controls">
+                <div class="tts-section-heading"><h4>음악 설정</h4></div>
+                <label class="tts-field"><span>분위기</span><select id="bgmMood"><option value="">설명 따르기</option><option value="calm, warm and reflective">차분하고 따뜻하게</option><option value="tense, suspenseful and mysterious">긴장감·미스터리</option><option value="hopeful, uplifting and inspiring">희망·감동</option><option value="playful, quirky and humorous">코믹·경쾌함</option><option value="epic, grand and dramatic">웅장·극적</option></select></label>
+                <label class="tts-field"><span>주요 악기</span><select id="bgmInstruments"><option value="">설명 따르기</option><option value="piano, cello and warm string ensemble">피아노·현악기</option><option value="analog synthesizers, electronic bass and drum machine">신시사이저·전자 드럼</option><option value="acoustic guitar, soft percussion and bass">어쿠스틱 기타</option><option value="orchestral strings, brass and cinematic percussion">오케스트라</option></select></label>
+                <label class="bgm-toggle"><input id="bgmLimitDuration" type="checkbox" checked /> 120초 길이 제한</label>
+                <label class="tts-field"><span>생성 길이 · 초</span><input id="bgmDuration" type="number" min="10" max="120" value="30" required /></label><p class="tts-help" id="bgmDurationHelp">제한을 끄면 엔진 범위 내에서 최대 600초까지 입력할 수 있습니다. 긴 곡은 메모리와 시간이 더 필요합니다.</p>
+                <label class="tts-field"><span>템포 · BPM (30~240)</span><input id="bgmBpm" type="number" min="30" max="240" value="90" /></label>
+                <p class="tts-help">시드는 생성마다 자동으로 무작위 선택되며 결과에 표시됩니다.</p>
+                <details class="tts-prompt-details bgm-advanced" open><summary>⚙ 상세 생성 설정 · 펼치기 / 접기</summary>
+                  <label class="tts-field"><span>조성 · 비워두면 지정 안 함</span><input id="bgmKeyscale" placeholder="예: C major / A minor" maxlength="40" /></label>
+                  <label class="tts-field"><span>박자 · 비워두면 지정 안 함</span><select id="bgmTimesignature"><option value="">지정 안 함</option><option value="2">2박</option><option value="3">3박</option><option value="4">4박</option><option value="6">6박</option></select></label>
+                  <p class="tts-help">높은 값이 항상 좋은 결과를 뜻하지는 않습니다. 한 항목씩 바꿔 비교하세요.</p>
+                  <label class="tts-field"><span>생성 단계 · 많을수록 느림 (10~100)</span><input id="bgmSteps" type="number" min="10" max="100" value="50" required /></label>
+                  <label class="tts-field"><span>CFG · 설명을 따르는 강도 (0~15)</span><input id="bgmGuidance" type="number" min="0" max="15" step="0.1" value="7" required /></label>
+                  <p class="tts-help">CFG는 음악 설명을 따르는 강도입니다. 높이면 지시를 강조하지만 지나치면 자연스러움이 떨어질 수 있습니다.</p>
+                  <label class="tts-field"><span>Shift · 생성 단계 배분 (0.1~5)</span><input id="bgmShift" type="number" min="0.1" max="5" step="0.1" value="1" required /></label>
+                  <label class="tts-field"><span>CFG 적용 시작 · 진행 비율</span><input id="bgmCfgStart" type="number" min="0" max="1" step="0.05" value="0" required /></label>
+                  <label class="tts-field"><span>CFG 적용 종료 · 진행 비율</span><input id="bgmCfgEnd" type="number" min="0" max="1" step="0.05" value="1" required /></label>
+                  <label class="tts-field"><span>추론 방식</span><select id="bgmMethod"><option value="ode">ODE · 기본</option><option value="sde">SDE · 확률적 변화</option></select></label>
+                  <p class="tts-help">ODE는 같은 조건의 결과를 비교하기 좋습니다. SDE는 생성 중 확률적 변화를 더해 다양한 결과를 탐색하기 좋지만 더 좋은 음질을 보장하지는 않습니다.</p>
+                  <label class="tts-field"><span>샘플러</span><select id="bgmSampler"><option value="euler">Euler · 기본</option><option value="heun">Heun · 추가 계산</option></select></label>
+                  <label class="tts-field"><span>페이드 인 · 초</span><input id="bgmFadeIn" type="number" min="0" max="10" step="0.1" value="0.3" required /></label>
+                  <label class="tts-field"><span>페이드 아웃 · 초</span><input id="bgmFadeOut" type="number" min="0" max="10" step="0.1" value="1" required /></label>
+                  <button class="button button--secondary" id="bgmResetSettings" type="button">상세 설정 기본값 복원</button>
+                  <label class="tts-field"><span>출력 음량 정규화</span><select id="bgmNormalize"><option value="true">사용</option><option value="false">사용 안 함</option></select></label>
+                  <label class="tts-field"><span>정규화 목표 · dBFS</span><input id="bgmNormalizationDb" type="number" min="-30" max="0" step="0.1" value="-1" required /></label>
+                </details>
+                <p class="tts-help">ACE-Step 1.5 XL SFT · 로컬 생성. 다른 TTS·영상 작업 중이면 최대 15분 기다립니다. 생성 중에는 새 GPU 작업을 피해주세요.</p>
+                <button class="button tts-generate" id="bgmGenerate" type="button" disabled>BGM 생성</button>
+                <p class="tts-message" id="bgmMessage" aria-live="polite"></p>
+              </aside>
+            </div>
+            <section class="tts-output"><div class="tts-section-heading"><h4>생성 기록</h4><button class="button button--secondary" id="bgmRefresh" type="button">새로고침</button></div><div id="bgmHistory"><p class="tts-help">완성된 음악이 이곳에 저장됩니다.</p></div></section>
+          </section>
+          <section class="tab-panel files-shell" id="filesPanel" data-section="files" aria-labelledby="filesTab">
+            <header class="files-toolbar">
+              <div>
+                <h3>프로젝트 파일</h3>
+                <p>생성 이미지와 기획·스토리보드 문서를 프로젝트 폴더에 자동 저장합니다.</p>
+              </div>
+              <div class="files-toolbar__actions">
+                <button class="button button--secondary" type="button" id="syncProjectFilesButton" disabled>지금 저장</button>
+                <button class="button button--secondary" type="button" id="refreshProjectFilesButton" disabled>새로고침</button>
+              </div>
+            </header>
+            <div class="files-location">
+              <span>저장 위치</span>
+              <code id="projectFilesPath">프로젝트를 선택해 주세요.</code>
+            </div>
+            <p class="files-status" id="projectFilesStatus" aria-live="polite"></p>
+            <section class="storage-dashboard" aria-label="프로젝트 저장 용량">
+              <div class="storage-card">
+                <span>프로젝트 폴더</span>
+                <strong id="projectDiskUsage">0 B</strong>
+              </div>
+              <div class="storage-card">
+                <span>생성 이미지</span>
+                <strong id="projectImageUsage">0 B</strong>
+              </div>
+              <div class="storage-card">
+                <span>문서·설정</span>
+                <strong id="projectDocumentUsage">0 B</strong>
+              </div>
+              <div class="storage-card">
+                <span>브라우저 이미지 저장소</span>
+                <strong id="browserAssetUsage">계산 중</strong>
+                <small id="browserQuotaUsage"></small>
+              </div>
+            </section>
+            <section class="storage-cleanup">
+              <div>
+                <strong>용량 정리</strong>
+                <p>현재 프로젝트와 히스토리에서 사용하는 파일은 유지합니다.</p>
+              </div>
+              <div class="storage-cleanup__actions">
+                <button class="button button--secondary" type="button" id="cleanupDiskImagesButton" disabled>이전 디스크 이미지 정리</button>
+                <button class="button button--secondary" type="button" id="cleanupBrowserAssetsButton" disabled>미사용 브라우저 이미지 정리</button>
+              </div>
+            </section>
+            <div class="files-list" id="projectFilesList"></div>
+          </section>
+
+          <section class="tab-panel" id="settingsPanel" data-section="settings" aria-labelledby="settingsTab">
+            <div class="settings-shell">
+              <header class="settings-header">
+                <h3>설정</h3>
+                <p>프로그램 버전과 업데이트 상태를 확인합니다.</p>
+              </header>
+              <section class="update-card" aria-labelledby="updateCardTitle">
+                <div class="update-card__heading">
+                  <div>
+                    <h4 id="updateCardTitle">프로그램 업데이트</h4>
+                    <p>GitHub Release에서 새 버전을 확인합니다. LLM 토큰은 사용하지 않습니다.</p>
+                  </div>
+                  <span class="update-card__version" id="currentAppVersion">현재 버전 확인 중</span>
+                </div>
+                <div class="update-card__status" id="updateStatus" aria-live="polite">업데이트 정보를 불러오지 않았습니다.</div>
+                <div class="update-card__details" id="updateDetails" hidden>
+                  <strong id="latestAppVersion"></strong>
+                  <pre id="updateReleaseNotes"></pre>
+                </div>
+                <div class="update-card__actions">
+                  <button class="button button--secondary" id="checkForUpdatesButton" type="button">업데이트 확인</button>
+                  <button class="button" id="downloadUpdateButton" type="button" hidden>다운로드 및 업데이트 준비</button>
+                </div>
+                <p class="update-card__notice">다운로드한 파일은 체크섬 검증 후 updates 폴더에 저장됩니다. 현재 프로그램과 .env, projects는 자동으로 덮어쓰지 않습니다.</p>
+              </section>
+            </div>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <div class="project-modal" id="projectModal" aria-hidden="true">
+      <div class="project-modal__backdrop" data-close-modal></div>
+      <div class="project-modal__content" role="dialog" aria-modal="true" aria-labelledby="projectModalTitle">
+        <div class="project-modal__header">
+          <h3 id="projectModalTitle">새 프로젝트 만들기</h3>
+          <button class="project-modal__close" type="button" data-close-modal aria-label="닫기">×</button>
+        </div>
+        <form class="project-form" id="projectForm">
+          <label class="project-form__field">
+            <span>프로젝트명</span>
+            <input id="projectNameInput" name="projectName" type="text" maxlength="60" placeholder="예: 제품 소개 영상" required />
+          </label>
+          <label class="project-form__field">
+            <span>클라이언트명</span>
+            <input id="clientNameInput" name="clientName" type="text" maxlength="60" placeholder="예: Studio N" />
+          </label>
+          <div class="project-form__actions">
+            <button class="button button--secondary" type="button" data-close-modal>취소</button>
+            <button class="button" type="submit">생성</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="project-modal council-employee-modal" id="councilEmployeeModal" aria-hidden="true">
+      <div class="project-modal__backdrop" data-close-council-employee></div>
+      <div class="project-modal__content council-employee-modal__content" role="dialog" aria-modal="true" aria-labelledby="councilEmployeeModalTitle">
+        <div class="project-modal__header"><div><span class="council-eyebrow">AI STAFF PROFILE</span><h3 id="councilEmployeeModalTitle">직원 추가</h3></div><button class="project-modal__close" type="button" data-close-council-employee aria-label="닫기">×</button></div>
+        <form class="project-form council-employee-form" id="councilEmployeeForm">
+          <input id="councilEmployeeId" type="hidden" />
+          <label class="project-form__field"><span>이름</span><input id="councilEmployeeName" maxlength="30" required placeholder="예: 모아" /></label>
+          <label class="project-form__field"><span>부서</span><select id="councilEmployeeDepartment" required><option value="strategy">콘셉트 전략실</option><option value="script">내러티브 작가실</option><option value="board">컷 설계실</option><option value="visual">프레임 미술실</option><option value="motion">모션 제작실</option><option value="quality">최종 검수실</option></select></label>
+          <label class="project-form__field"><span>직책</span><input id="councilEmployeeTitle" maxlength="40" required placeholder="예: 브랜드 전략가" /></label>
+          <label class="project-form__field"><span>AI 제공자</span><select id="councilEmployeeProvider"><option value="openai">GPT</option><option value="anthropic">Claude</option><option value="gemini">Gemini</option></select></label>
+          <label class="project-form__field"><span>모델</span><select id="councilEmployeeModel"></select></label>
+          <label class="project-form__field"><span>성격</span><select id="councilEmployeePersonality"><option value="balanced">균형형</option><option value="creative">창의형</option><option value="analytical">분석형</option><option value="meticulous">꼼꼼형</option><option value="proactive">추진형</option><option value="collaborative">협업형</option></select></label>
+          <label class="project-form__field"><span>캐릭터 외형</span><select id="councilEmployeeAppearance"><option value="casual-male-01">캐주얼 남성</option><option value="strategist-female-01">전략가 여성</option><option value="writer-female-01">작가 여성</option><option value="shot-female-01">컷 디자이너 여성</option><option value="motion-female-01">모션 여성</option><option value="artist-male-01">프레임 남성</option></select></label>
+          <label class="project-form__field project-form__field--wide"><span>담당 업무</span><textarea id="councilEmployeeDuties" rows="3" required placeholder="직원이 어떤 관점에서 검토할지 적어 주세요."></textarea></label>
+          <fieldset class="council-avatar-picker"><legend>2등신 픽셀 캐릭터</legend><label><input type="radio" name="councilEmployeeAvatar" value="sprite-employee-male-v1.png" checked /><span class="council-avatar-picker__sprite" aria-hidden="true"></span><span>캐주얼 남성</span></label></fieldset>
+          <label class="project-form__field project-form__field--wide"><span>직원 전용 시스템 지침 (선택)</span><textarea id="councilEmployeeSystemPrompt" rows="4" placeholder="비워두면 부서·직책·담당 업무를 바탕으로 자동 구성합니다."></textarea></label>
+          <label class="project-form__field project-form__field--wide"><span>사용자 프롬프트 (선택)</span><textarea id="councilEmployeeUserPrompt" rows="4" placeholder="이 직원이 업무 요청을 받을 때 항상 참고할 개별 지침을 입력하세요."></textarea></label>
+          <div class="project-form__actions project-form__actions--spread"><button class="button button--danger" id="councilEmployeeDelete" type="button" hidden>직원 삭제</button><span></span><button class="button button--secondary" type="button" data-close-council-employee>취소</button><button class="button" type="submit">저장</button></div>
+        </form>
+      </div>
+    </div>
+
+    <div class="image-viewer" id="imageViewer" aria-hidden="true">
+      <button class="image-viewer__backdrop" type="button" data-close-image-viewer aria-label="이미지 확대 보기 닫기"></button>
+      <div class="image-viewer__dialog" role="dialog" aria-modal="true" aria-labelledby="imageViewerTitle">
+        <div class="image-viewer__header">
+          <h3 id="imageViewerTitle">이미지 프리뷰</h3>
+          <button class="image-viewer__close" type="button" data-close-image-viewer aria-label="닫기">×</button>
+        </div>
+        <div class="image-viewer__canvas">
+          <img id="imageViewerImage" alt="확대된 스토리보드 이미지" />
+        </div>
+      </div>
+    </div>
+
+    <div class="workflow-image-editor" id="workflowImageEditor" aria-hidden="true">
+      <button class="workflow-image-editor__backdrop" type="button" data-close-workflow-image-editor aria-label="이미지 생성 설정 닫기"></button>
+      <div class="workflow-image-editor__dialog" role="dialog" aria-modal="true" aria-labelledby="workflowImageEditorTitle">
+        <header class="workflow-image-editor__header">
+          <div>
+            <span>이미지 생성 결과</span>
+            <h3 id="workflowImageEditorTitle">생성 이미지</h3>
+          </div>
+          <button class="workflow-image-editor__close" type="button" data-close-workflow-image-editor aria-label="닫기">×</button>
+        </header>
+        <div class="workflow-image-editor__body">
+          <div class="workflow-image-editor__preview">
+            <img id="workflowImageEditorImage" alt="확대된 생성 이미지" />
+          </div>
+          <aside class="workflow-image-editor__settings" aria-label="이미지 재생성 설정">
+            <label class="workflow-image-editor__field">
+              <span>이미지 모델</span>
+              <select id="workflowImageEditorModel"></select>
+            </label>
+            <label class="workflow-image-editor__field">
+              <span>스토리보드 컷</span>
+              <select id="workflowImageEditorCut"></select>
+            </label>
+            <label class="workflow-image-editor__field">
+              <span>비율</span>
+              <select id="workflowImageEditorAspectRatio"></select>
+            </label>
+            <label class="workflow-image-editor__field">
+              <span>해상도</span>
+              <select id="workflowImageEditorResolution"></select>
+            </label>
+            <label class="workflow-image-editor__field">
+              <span>출력 형식</span>
+              <select id="workflowImageEditorOutputFormat"></select>
+            </label>
+            <label class="workflow-image-editor__field workflow-image-editor__field--prompt">
+              <span>이미지 프롬프트</span>
+              <textarea id="workflowImageEditorPrompt" rows="10"></textarea>
+              <small>이곳의 수정은 이미지 생성 노드에만 저장되며 스토리보드 원문은 변경하지 않습니다.</small>
+            </label>
+            <p class="workflow-image-editor__status" id="workflowImageEditorStatus" aria-live="polite"></p>
+            <div class="workflow-image-editor__actions">
+              <button class="button button--secondary" type="button" id="workflowImageEditorDownload">이미지 저장</button>
+              <button class="button" type="button" id="workflowImageEditorRegenerate">다시 생성</button>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="./src/app.js"></script>
+  </body>
+</html>

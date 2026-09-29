@@ -1,0 +1,89 @@
+:root {
+  color-scheme: dark;
+  --bg: #07111f;
+  --panel: #111c2f;
+  --panel-2: #18263d;
+  --border: #25354c;
+  --text: #f2f6ff;
+  --muted: #8da0bc;
+  --accent: #4cc9f0;
+  --accent-2: #7b61ff;
+  --body-gradient-end: #0d1729;
+  --sidebar-bg: rgba(8, 16, 29, 0.92);
+  --node-bg: #14233a;
+  --canvas-bg: #091525;
+}
+
+:root[data-theme="warm-light"] {
+  color-scheme: light;
+  --bg: #ebe9e2;
+  --panel: #f8f6f0;
+  --panel-2: #efede6;
+  --border: #d2cec3;
+  --text: #28323a;
+  --muted: #68747a;
+  --accent: #397b88;
+  --accent-2: #716b9e;
+  --body-gradient-end: #e2e0d8;
+  --sidebar-bg: rgba(244, 242, 235, 0.97);
+  --node-bg: #f7f5ef;
+  --canvas-bg: #e7e5de;
+}
+
+:root[data-theme="sage"] {
+  color-scheme: light;
+  --bg: #dfe7df;
+  --panel: #f1f5ef;
+  --panel-2: #e6ece3;
+  --border: #c2cec0;
+  --text: #28362e;
+  --muted: #66766b;
+  --accent: #477d67;
+  --accent-2: #6d748e;
+  --body-gradient-end: #d3ddd3;
+  --sidebar-bg: rgba(232, 239, 230, 0.97);
+  --node-bg: #edf3ea;
+  --canvas-bg: #d9e3d7;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, var(--bg), var(--body-gradient-end));
+  color: var(--text);
+}
+
+:root:not([data-theme="dark"]) .workflow-node,
+:root:not([data-theme="dark"]) .workflow-inspector,
+:root:not([data-theme="dark"]) .workflow-library,
+:root:not([data-theme="dark"]) .workflow-group {
+  background-color: var(--node-bg);
+}
+
+:root:not([data-theme="dark"]) .workflow-canvas {
+  background-color: var(--canvas-bg);
+}
+
+:root:not([data-theme="dark"]) .workflow-node__reference-preview,
+:root:not([data-theme="dark"]) .workflow-node__style-preview {
+  background: color-mix(in srgb, var(--panel-2) 88%, var(--accent) 12%);
+}
+
+:root:not([data-theme="dark"]) .workflow-node__header,
+:root:not([data-theme="dark"]) .workflow-node__status,
+:root:not([data-theme="dark"]) .workflow-node__ports {
+  color: var(--text);
+}
+
+button {
+  font: inherit;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}

@@ -1,0 +1,169 @@
+:root {
+  color: #e6edf7;
+  background: #090d14;
+  font-family: Inter, system-ui, sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* { box-sizing: border-box; }
+html, body, #root { min-width: 320px; min-height: 100%; margin: 0; }
+button { font: inherit; }
+
+.prototype-shell {
+  width: min(1440px, 100%);
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.prototype-shell--embedded { width: 100%; min-height: 0; padding: 0; }
+.prototype-shell--embedded > :not(.game-panel) { display: none; }
+.prototype-shell--embedded .game-panel { border: 0; border-radius: 0; }
+
+.prototype-header,
+.react-test-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.prototype-header { margin-bottom: 16px; }
+.prototype-header strong { font-size: 20px; letter-spacing: .08em; }
+.prototype-header span, .react-test-panel span { color: #8fa2ba; }
+
+.game-panel {
+  overflow: hidden;
+  border: 1px solid #29364a;
+  border-radius: 10px;
+  background: #101622;
+}
+
+.phaser-game {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  min-height: 240px;
+}
+
+.phaser-game canvas {
+  display: block;
+  image-rendering: pixelated;
+}
+
+.react-test-panel {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border: 1px solid #29364a;
+  border-radius: 10px;
+  background: #111924;
+}
+
+.react-test-panel div { display: grid; gap: 4px; }
+.react-test-panel .react-test-panel__actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.react-test-panel button {
+  padding: 9px 14px;
+  border: 0;
+  border-radius: 6px;
+  color: #07111d;
+  background: #7dd3fc;
+  cursor: pointer;
+}
+
+.agent-panel {
+  margin-top: 16px;
+  padding: 16px;
+  border: 1px solid #29364a;
+  border-radius: 10px;
+  background: #111924;
+}
+
+.agent-panel > header,
+.agent-card,
+.agent-card__identity,
+.agent-card__actions {
+  display: flex;
+  align-items: center;
+}
+
+.agent-panel > header { justify-content: space-between; margin-bottom: 12px; }
+.agent-panel > header span, .agent-card small { color: #8fa2ba; }
+.agent-card { justify-content: space-between; gap: 18px; padding: 12px; border-radius: 8px; background: #0b121c; }
+.agent-card__identity { gap: 10px; min-width: 230px; }
+.agent-card__identity div, .agent-card__status { display: grid; gap: 3px; }
+.agent-state { width: 11px; height: 11px; border-radius: 50%; background: #94a3b8; }
+.agent-state--moving { background: #38bdf8; box-shadow: 0 0 10px #38bdf8; }
+.agent-state--working { background: #34d399; }
+.agent-state--meeting { background: #c084fc; }
+.agent-state--blocked { background: #fb7185; }
+.agent-card__actions { flex-wrap: wrap; gap: 7px; }
+.agent-card__actions button { padding: 7px 10px; border: 1px solid #334155; border-radius: 6px; color: #dbeafe; background: #172235; cursor: pointer; }
+.agent-card__actions .agent-card__remove { border-color: #7f3443; color: #fecdd3; }
+
+.employee-panel {
+  margin-top: 16px;
+  padding: 16px;
+  border: 1px solid #3b526c;
+  border-radius: 10px;
+  background: #111924;
+}
+.employee-panel > header { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+.employee-panel > header div { display: grid; gap: 4px; }
+.employee-panel span { color: #8fa2ba; }
+.employee-form { display: grid; grid-template-columns: repeat(4, minmax(150px, 1fr)); align-items: end; gap: 10px; margin-top: 14px; }
+.employee-form label { display: grid; gap: 5px; color: #a9bad0; font-size: 13px; }
+.employee-form input,
+.employee-form select,
+.employee-form textarea,
+.employee-form button { min-height: 39px; padding: 8px 10px; border: 1px solid #3a526d; border-radius: 6px; color: #e6edf7; background: #17263a; }
+.employee-form textarea { resize: vertical; font: inherit; }
+.employee-form button { cursor: pointer; color: #082f49; background: #67e8f9; }
+.employee-personality { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 8px; margin: 2px 0 0; padding: 10px; border: 1px solid #2d425a; border-radius: 8px; }
+.employee-personality legend { padding: 0 5px; color: #a9bad0; font-size: 13px; }
+.employee-personality label { display: flex; align-items: center; gap: 6px; padding: 7px 10px; border: 1px solid #334b65; border-radius: 999px; cursor: pointer; background: #152236; }
+.employee-personality label:has(input:checked) { border-color: #67e8f9; color: #cffafe; background: #164e63; }
+.employee-personality input { min-height: auto; margin: 0; padding: 0; accent-color: #22d3ee; }
+.employee-prompt { grid-column: 1 / -2; }
+
+.navigation-tools {
+  margin-top: 16px;
+  padding: 16px;
+  border: 1px solid #34506e;
+  border-radius: 10px;
+  background: #101a28;
+}
+.navigation-tools > header,
+.navigation-tools__controls,
+.navigation-test { display: flex; align-items: center; gap: 12px; }
+.navigation-tools > header { justify-content: space-between; }
+.navigation-tools > header div,
+.navigation-test div { display: grid; gap: 4px; }
+.navigation-tools span,
+.navigation-test small { color: #8fa2ba; }
+.navigation-tools__dirty { color: #fbbf24 !important; }
+.navigation-tools__controls { flex-wrap: wrap; margin-top: 14px; }
+.navigation-tools__toolset { display: flex; flex-wrap: wrap; gap: 6px; padding: 4px; border: 1px solid #2c4159; border-radius: 8px; }
+.navigation-tools label { display: flex; align-items: center; gap: 8px; color: #a9bad0; }
+.navigation-tools button,
+.navigation-tools select {
+  padding: 8px 11px;
+  border: 1px solid #3a526d;
+  border-radius: 6px;
+  color: #e6edf7;
+  background: #17263a;
+}
+.navigation-tools button { cursor: pointer; }
+.navigation-tools button:disabled { cursor: not-allowed; opacity: .45; }
+.navigation-tools button.is-active { border-color: #67e8f9; color: #082f49; background: #67e8f9; }
+.navigation-tools .navigation-tools__danger { border-color: #7f3443; color: #fecdd3; }
+.navigation-tools__help { margin: 10px 0 0; color: #91a5bd; font-size: 13px; }
+.navigation-test { justify-content: space-between; margin-top: 14px; padding-top: 14px; border-top: 1px solid #293b51; }
+
+@media (max-width: 640px) {
+  .prototype-shell { padding: 12px; }
+  .prototype-header, .react-test-panel { align-items: flex-start; flex-direction: column; }
+  .agent-card { align-items: flex-start; flex-direction: column; }
+  .navigation-tools > header, .navigation-test { align-items: flex-start; flex-direction: column; }
+  .employee-panel > header { align-items: flex-start; flex-direction: column; }
+  .employee-form { grid-template-columns: 1fr; }
+}

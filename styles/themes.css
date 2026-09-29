@@ -1,0 +1,56 @@
+:root:not([data-theme="dark"]) .workflow-canvas {
+  background-color: var(--canvas-bg);
+  background-image: radial-gradient(circle, color-mix(in srgb, var(--muted) 32%, transparent) 1px, transparent 1px);
+}
+
+:root:not([data-theme="dark"]) .workflow-library,
+:root:not([data-theme="dark"]) .workflow-inspector,
+:root:not([data-theme="dark"]) .workflow-node,
+:root:not([data-theme="dark"]) .workflow-group,
+:root:not([data-theme="dark"]) .workflow-quick-connect {
+  background: var(--node-bg);
+  color: var(--text);
+}
+
+:root:not([data-theme="dark"]) .workflow-node--reference-image,
+:root:not([data-theme="dark"]) .workflow-node--generated-image,
+:root:not([data-theme="dark"]) .workflow-node--global-style {
+  background: var(--panel-2);
+}
+
+:root:not([data-theme="dark"]) .workflow-node__reference-preview,
+:root:not([data-theme="dark"]) .workflow-node__style-preview,
+:root:not([data-theme="dark"]) .workflow-canvas__empty {
+  background: color-mix(in srgb, var(--panel-2) 88%, var(--accent) 12%);
+  color: var(--muted);
+}
+
+:root:not([data-theme="dark"]) .workflow-node__header,
+:root:not([data-theme="dark"]) .workflow-node__status {
+  background: color-mix(in srgb, var(--panel) 88%, transparent);
+}
+
+:root:not([data-theme="dark"]) .workflow-node__port-dot,
+:root:not([data-theme="dark"]) .workflow-node__resize {
+  background: var(--panel);
+}
+
+:root:not([data-theme="dark"]) .workflow-inspector__field input,
+:root:not([data-theme="dark"]) .workflow-inspector__field textarea,
+:root:not([data-theme="dark"]) .workflow-inspector__field select,
+:root:not([data-theme="dark"]) .workflow-node__inline-field input,
+:root:not([data-theme="dark"]) .workflow-node__inline-field textarea,
+:root:not([data-theme="dark"]) .workflow-node__inline-field select {
+  background: var(--panel-2);
+  color: var(--text);
+}
+
+:root:not([data-theme="dark"]) .workflow-edge {
+  stroke: var(--accent-2);
+}
+
+:root:not([data-theme="dark"]) .project-modal__content,
+:root:not([data-theme="dark"]) .image-viewer__dialog {
+  background: var(--panel);
+  color: var(--text);
+}
